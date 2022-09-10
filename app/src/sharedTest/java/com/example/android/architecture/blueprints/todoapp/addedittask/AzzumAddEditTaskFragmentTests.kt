@@ -119,6 +119,9 @@ class AzzumAddEditTaskFragmentTests {
         val result = repository.getTasksBlocking(true) as Result.Success
         assertThat(result.data.size,`is`(0))
         assertThat(result.data, `is`(emptyList()))
+
+        val snackbarMsg = InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
+        uiDevice.findObject(UiSelector().text(snackbarMsg)).waitForExists(500)
     }
 
     @Test
@@ -177,7 +180,7 @@ class AzzumAddEditTaskFragmentTests {
 
         onView(withId(R.id.save_task_fab)).perform(click())
 
-        //THEN - verufy repository has the task
+        //THEN - verify repository has the task
 //        val result = repository.getTasksBlocking(true) as Result.Success
 //        assertThat(result.data.size, `is`(1))
 //        assertThat(result.data.get(0).title, `is`("New Task"))
