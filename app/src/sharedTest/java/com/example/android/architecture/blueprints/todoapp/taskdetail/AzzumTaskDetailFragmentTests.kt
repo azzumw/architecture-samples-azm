@@ -18,6 +18,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ServiceLocator
+import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskFragment
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeRepository
@@ -176,13 +177,13 @@ class AzzumTaskDetailFragmentTests {
         val mockedNav = mock(NavController::class.java)
 
         scenario.onFragment{
-//            mockedNav.setGraph(R.navigation.nav_graph)
+            mockedNav.setGraph(R.navigation.nav_graph)
             Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         onView(withId(R.id.edit_task_fab)).perform(click())
 
-        //ln 186-188: this throw NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
+        //ln 186-188: this throws NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
         //tried to play around with the version but the issue persists
         //https://github.com/mockito/mockito/issues/1716
         verify(mockedNav).navigate(
@@ -199,32 +200,23 @@ class AzzumTaskDetailFragmentTests {
         val activeTask = Task("New Task","Description")
         repository.saveTaskBlocking(activeTask)
 
-        //WHEN - detail fragment is launched
+        //and detail fragment is launched
         val bundle = TaskDetailFragmentArgs(activeTask.id).toBundle()
-//        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle,R.style.AppTheme)
 
-
-        val scenario = launchFragmentInContainer {
-            TaskDetailFragment().also { fragment ->
-                fragment.arguments = bundle
-                // In addition to returning a new instance of our Fragment,
-                // get a callback whenever the fragment’s view is created
-                // or destroyed so that we can set the NavController
-                fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
-                    if (viewLifecycleOwner != null) {
-                        // The fragment’s view has just been created
-                        navController.setGraph(R.navigation.nav_graph)
-                        Navigation.setViewNavController(fragment.requireView(), navController)
-                    }
-                }
-            }
+        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
+        scenario.onFragment {
+            navController.setGraph(R.navigation.nav_graph)
+            navController.setCurrentDestination(R.id.task_detail_fragment_dest)
+            Navigation.setViewNavController(it.requireView(), navController)
         }
 
         dataBindingIdlingResource.monitorFragment(scenario)
 
+        //WHEN - edit task fab is clicked
         onView(withId(R.id.edit_task_fab)).perform(click())
 
-//        assertThat(navController.currentDestination?.id, `is`(R.id.add_edit_task_fragment_dest))
+        //THEN - verify we navigate to add_edit_task_fragment
+        assertThat(navController.currentDestination?.id, `is`(R.id.add_edit_task_fragment_dest))
 
     }
 }
