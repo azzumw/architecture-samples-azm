@@ -176,7 +176,7 @@ class AzzumTaskDetailFragmentTests {
         val mockedNav = mock(NavController::class.java)
 
         scenario.onFragment{
-            mockedNav.setGraph(R.navigation.nav_graph)
+//            mockedNav.setGraph(R.navigation.nav_graph)
             Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
