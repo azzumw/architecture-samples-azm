@@ -22,6 +22,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Result.Error
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
+import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -80,6 +81,7 @@ class TasksLocalDataSource internal constructor(
     }
 
     override suspend fun completeTask(task: Task) = withContext(ioDispatcher) {
+
         tasksDao.updateCompleted(task.id, true)
     }
 

@@ -172,7 +172,15 @@ dependencies {
     androidTestImplementation "androidx.appcompat:appcompat:$appCompatVersion"
     androidTestImplementation "com.google.android.material:material:$materialVersion"
 
+    //UI Automator
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:2.2.0"
+//    androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.28.3'
+
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+
+
 }

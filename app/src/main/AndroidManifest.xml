@@ -19,6 +19,7 @@
     package="com.example.android.architecture.blueprints.todoapp">
 
     <application
+
         android:allowBackup="false"
         android:name=".TodoApplication"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+
             android:name="com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"

@@ -68,4 +68,6 @@ ext {
     rulesVersion = '1.0.1'
     timberVersion = '4.7.1'
     truthVersion = '1.1.2'
+    mockitoVersion = '2.8.9'
+    dexMakerVersion = '2.12.1'
 }

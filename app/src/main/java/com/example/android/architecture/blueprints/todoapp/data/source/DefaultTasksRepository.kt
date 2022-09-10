@@ -109,10 +109,13 @@ class DefaultTasksRepository(
     }
 
     override suspend fun completeTask(task: Task) {
-        coroutineScope {
-            launch { tasksRemoteDataSource.completeTask(task) }
-            launch { tasksLocalDataSource.completeTask(task) }
+        wrapEspressoIdlingResource {
+            coroutineScope {
+                launch { tasksRemoteDataSource.completeTask(task) }
+                launch { tasksLocalDataSource.completeTask(task) }
+            }
         }
+
     }
 
     override suspend fun completeTask(taskId: String) {
