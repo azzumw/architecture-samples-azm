@@ -41,7 +41,7 @@ import org.mockito.Mockito.*
 @RunWith(AndroidJUnit4::class)
 class EditTasksTests {
 
-    companion object{
+    companion object {
         const val ACTIVE_TASK_TITLE = "Active Task"
         const val ACTIVE_TASK_DESC = "Active Task Description"
         const val ACTIVE_TASK_ID = "actId1"
@@ -57,8 +57,6 @@ class EditTasksTests {
 
     private val dataBindingIdlingResource = DataBindingIdlingResource()
     private lateinit var repository: FakeRepository
-    private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
 
     @Before
     fun setUp() {
@@ -67,14 +65,14 @@ class EditTasksTests {
     }
 
     @After
-    fun tearDown() = runTest{
+    fun tearDown() = runTest {
         ServiceLocator.resetRepository()
     }
 
     @Test
     fun editTask_noChanges() {
         //GIVEN - an active task
-        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC,false, ACTIVE_TASK_ID)
+        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC, false, ACTIVE_TASK_ID)
         repository.saveTaskBlocking(activeTask)
 
         //launch edit fragment
@@ -83,8 +81,8 @@ class EditTasksTests {
         dataBindingIdlingResource.monitorFragment(scenario)
 
         val mockedNav = mock(NavController::class.java)
-        scenario.onFragment{
-            Navigation.setViewNavController(it.requireView(),mockedNav)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         //WHEN - save fab is clicked
@@ -97,16 +95,15 @@ class EditTasksTests {
 
         //repo doesn't contain changes
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.first().title,`is`(ACTIVE_TASK_TITLE))
-        assertThat(result.data.first().description,`is`(ACTIVE_TASK_DESC))
+        assertThat(result.data.first().title, `is`(ACTIVE_TASK_TITLE))
+        assertThat(result.data.first().description, `is`(ACTIVE_TASK_DESC))
         assertThat(result.data.size, `is`(1))
     }
-
 
     @Test
     fun editTask_changeTitleAndDesc_changesTaskDetails() {
         //GIVEN - an active task
-        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC,false, ACTIVE_TASK_ID)
+        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC, false, ACTIVE_TASK_ID)
         repository.saveTaskBlocking(activeTask)
 
         //launch edit fragment
@@ -115,8 +112,8 @@ class EditTasksTests {
         dataBindingIdlingResource.monitorFragment(scenario)
 
         val mockedNav = mock(NavController::class.java)
-        scenario.onFragment{
-            Navigation.setViewNavController(it.requireView(),mockedNav)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         //WHEN - title and description values are changed, and saved fab is clicked
@@ -131,8 +128,8 @@ class EditTasksTests {
 
         //THEN - repo contains changes
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.first().title,`is`(ACTIVE_NEW_TASK_TITLE))
-        assertThat(result.data.first().description,`is`(ACTIVE_NEW_TASK_DESC))
+        assertThat(result.data.first().title, `is`(ACTIVE_NEW_TASK_TITLE))
+        assertThat(result.data.first().description, `is`(ACTIVE_NEW_TASK_DESC))
         assertThat(result.data.first().title, `is`(not(ACTIVE_TASK_TITLE)))
         assertThat(result.data.first().description, `is`(not(ACTIVE_TASK_DESC)))
     }
@@ -140,18 +137,18 @@ class EditTasksTests {
     @Test
     fun editTask_changeTitleOnly_changesTitleDetailsOnly() {
         //GIVEN - an active task
-        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC,false, ACTIVE_TASK_ID)
+        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC, false, ACTIVE_TASK_ID)
         repository.saveTaskBlocking(activeTask)
 
         //launch the edit fragment
         val bundle = AddEditTaskFragmentArgs(ACTIVE_TASK_ID, ACTIVE_TASK_TITLE).toBundle()
-        val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle,R.style.AppTheme)
+        val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
         //mock the nav
         val mockedNav = mock(NavController::class.java)
-        scenario.onFragment{
-            Navigation.setViewNavController(it.requireView(),mockedNav)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         //WHEN - only the title is changed, save fab is clicked
@@ -167,8 +164,8 @@ class EditTasksTests {
         //THEN - verify
         //repo contains changes
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.last().title,`is`(ACTIVE_NEW_TASK_TITLE))
-        assertThat(result.data.last().description,`is`(ACTIVE_TASK_DESC))
+        assertThat(result.data.last().title, `is`(ACTIVE_NEW_TASK_TITLE))
+        assertThat(result.data.last().description, `is`(ACTIVE_TASK_DESC))
         assertThat(result.data.last().title, `is`(not(ACTIVE_TASK_TITLE)))
         assertThat(result.data.last().description, `is`(not(ACTIVE_NEW_TASK_DESC)))
         assertThat(result.data.size, `is`(1))
@@ -178,18 +175,18 @@ class EditTasksTests {
     @Test
     fun editTask_changeDescriptionOnly_changesDescriptionDetailsOnly() {
         //GIVEN - an active task
-        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC,false, ACTIVE_TASK_ID)
+        val activeTask = Task(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC, false, ACTIVE_TASK_ID)
         repository.saveTaskBlocking(activeTask)
 
         //launch the edit fragment
         val bundle = AddEditTaskFragmentArgs(ACTIVE_TASK_ID, ACTIVE_TASK_TITLE).toBundle()
-        val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle,R.style.AppTheme)
+        val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
         //mock the nav
         val mockedNav = mock(NavController::class.java)
-        scenario.onFragment{
-            Navigation.setViewNavController(it.requireView(),mockedNav)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         //WHEN - only the description is changed, save fab is clicked
@@ -205,12 +202,11 @@ class EditTasksTests {
         //THEN - verify
         //repo contains changes
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.last().title,`is`(ACTIVE_TASK_TITLE))
-        assertThat(result.data.last().description,`is`(ACTIVE_NEW_TASK_DESC))
+        assertThat(result.data.last().title, `is`(ACTIVE_TASK_TITLE))
+        assertThat(result.data.last().description, `is`(ACTIVE_NEW_TASK_DESC))
         assertThat(result.data.last().description, `is`(not(ACTIVE_TASK_DESC)))
         assertThat(result.data.size, `is`(1))
 
     }
-
 
 }
