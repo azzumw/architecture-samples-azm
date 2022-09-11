@@ -68,7 +68,6 @@ class AzzumTasksActivityTests {
 
         val noTaskIcon = viewWithId(R.id.no_tasks_icon)
 
-
     }
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -633,6 +632,7 @@ class AzzumTasksActivityTests {
 
         saveTaskFab.click()
 
+        //explain why have i used uiautomator due to lack of time =]
         uiDevice.wait(Until.gone(By.text(context.resources.getString(R.string.successfully_added_task_message))),TIMEOUT_TWO_SEC)
 
     }

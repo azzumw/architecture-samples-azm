@@ -1,4 +1,4 @@
-package com.example.android.architecture.blueprints.todoapp.taskdetail
+package com.example.android.architecture.blueprints.todoapp.tasks.taskdetail
 
 
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -22,6 +22,9 @@ import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragment
+import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragmentArgs
+import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
