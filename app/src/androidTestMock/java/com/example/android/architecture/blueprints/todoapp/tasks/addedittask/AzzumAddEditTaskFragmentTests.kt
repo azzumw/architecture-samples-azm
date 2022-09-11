@@ -23,8 +23,6 @@ import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.tasks.ADD_EDIT_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragment
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.util.DataBindingIdlingResource
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import com.example.android.architecture.blueprints.todoapp.util.getTasksBlocking
@@ -49,13 +47,13 @@ class AzzumAddEditTaskFragmentTests {
     private val dataBindingIdlingResource = DataBindingIdlingResource()
 
     @Before
-    fun initRepository(){
+    fun initRepository() {
         repository = FakeRepository()
         ServiceLocator.tasksRepository = repository
     }
 
     @After
-    fun cleanup() = runTest{
+    fun cleanup() = runTest {
         ServiceLocator.resetRepository()
     }
 
@@ -74,7 +72,7 @@ class AzzumAddEditTaskFragmentTests {
     @Test
     fun emptyTask_isNotSaved() {
         //GIVEN - Add/Edit fragment is launched
-        val bundle = AddEditTaskFragmentArgs(null,"New Task").toBundle()
+        val bundle = AddEditTaskFragmentArgs(null, "New Task").toBundle()
         val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
@@ -87,10 +85,11 @@ class AzzumAddEditTaskFragmentTests {
 
         //THEN repository is empty
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.size,`is`(0))
+        assertThat(result.data.size, `is`(0))
         assertThat(result.data, `is`(emptyList()))
 
-        val snackbarMsg = InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
+        val snackbarMsg =
+            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
         uiDevice.findObject(UiSelector().text(snackbarMsg)).waitForExists(1000)
 
     }
@@ -98,7 +97,7 @@ class AzzumAddEditTaskFragmentTests {
     @Test
     fun noTitleJustDescription_doesNotSaveTask() {
         //GIVEN - Add/Edit fragment is launched
-        val bundle = AddEditTaskFragmentArgs(null,"New Task").toBundle()
+        val bundle = AddEditTaskFragmentArgs(null, "New Task").toBundle()
         val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
@@ -119,17 +118,18 @@ class AzzumAddEditTaskFragmentTests {
         //THEN - task is not saved, repository is empty
         onView(withId(R.id.add_task_title_edit_text)).check(matches(isDisplayed()))
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.size,`is`(0))
+        assertThat(result.data.size, `is`(0))
         assertThat(result.data, `is`(emptyList()))
 
-        val snackbarMsg = InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
+        val snackbarMsg =
+            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
         uiDevice.findObject(UiSelector().text(snackbarMsg)).waitForExists(500)
     }
 
     @Test
     fun justTitleAndNoDescription_doesNotSaveTask() {
         //GIVEN - Add/Edit fragment is launched
-        val bundle = AddEditTaskFragmentArgs(null,"New Task").toBundle()
+        val bundle = AddEditTaskFragmentArgs(null, "New Task").toBundle()
         val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
@@ -148,10 +148,11 @@ class AzzumAddEditTaskFragmentTests {
 
         //THEN - verify repository is empty, snackbar shown, navigate is not called
         val result = repository.getTasksBlocking(true) as Result.Success
-        assertThat(result.data.size,`is`(0))
+        assertThat(result.data.size, `is`(0))
         assertThat(result.data, `is`(emptyList()))
 
-        val snackbarMsg = InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
+        val snackbarMsg =
+            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.empty_task_message)
         uiDevice.findObject(UiSelector().text(snackbarMsg)).waitForExists(1000)
     }
 
@@ -159,14 +160,14 @@ class AzzumAddEditTaskFragmentTests {
     fun addNewTask_checkSaveTaskCalled() {
 
         //GIVEN - Add/Edit fragment is launched
-        val bundle = AddEditTaskFragmentArgs(null,"New Task").toBundle()
+        val bundle = AddEditTaskFragmentArgs(null, "New Task").toBundle()
         val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         scenario.moveToState(Lifecycle.State.RESUMED)
 
         val mockedNav = mock(NavController::class.java)
 
-        scenario.onFragment{
-            Navigation.setViewNavController(it.requireView(),mockedNav)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), mockedNav)
         }
         dataBindingIdlingResource.monitorFragment(scenario)
         //WHEN - title and description are filled, and Save fab is clicked
@@ -194,6 +195,7 @@ class AzzumAddEditTaskFragmentTests {
         verify(mockedNav).navigate(
             AddEditTaskFragmentDirections.actionAddEditTaskFragmentToTasksFragment(
                 ADD_EDIT_RESULT_OK
-            ))
+            )
+        )
     }
 }

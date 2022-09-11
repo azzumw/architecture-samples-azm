@@ -32,11 +32,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 
-
 @MediumTest
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-class EditTasksTests {
+class AzzumEditTasksTests {
 
     companion object {
         const val ACTIVE_TASK_TITLE = "Active Task"

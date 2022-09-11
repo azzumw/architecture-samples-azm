@@ -47,7 +47,7 @@ class AzzumTasksActivityTests {
         const val ACTIVE_NEW_TASK_DESC = "New Active Task Description"
 
         const val COMPLETED_TASK_TITLE = "Completed Task"
-        const val COMPLETED_TASK_dESC = "Completed Task Description"
+        const val COMPLETED_TASK_DESC = "Completed Task Description"
         const val COMPLETED_TASK_ID = "compId1"
         const val COMPLETED_NEW_TASK_TITLE = "New Completed Task"
         const val COMPLETED_NEW_TASK_DESC = "New Completed Task Description"
@@ -125,7 +125,7 @@ class AzzumTasksActivityTests {
         dataBindingIdlingResource.monitorActivity(activity)
 
         //WHEN - task is created
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         //THEN - verify that the task is shown
         //task is not checked
@@ -192,7 +192,7 @@ class AzzumTasksActivityTests {
         dataBindingIdlingResource.monitorActivity(activity)
 
         //WHEN - task is added
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         //task is shown, clicked to show details, marked as completed
         viewWithText(COMPLETED_TASK_TITLE).isDisplayed().click()
@@ -310,7 +310,7 @@ class AzzumTasksActivityTests {
         noTaskIcon.isDisplayed()
 
         //WHEN - task is added
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         onView(
             allOf(
@@ -415,7 +415,7 @@ class AzzumTasksActivityTests {
 
         noTaskIcon.isDisplayed()
         //task is added
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         //ALL TASKS filter is set by default
         viewWithText(R.string.label_all).isDisplayed()
@@ -465,7 +465,7 @@ class AzzumTasksActivityTests {
 
         //add an active task and a completed task
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         //active task is not checked
         onView(
@@ -542,7 +542,7 @@ class AzzumTasksActivityTests {
         noTaskIcon.isDisplayed()
 
         //a completed task is added
-        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+        addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_DESC)
 
         onView(
             allOf(

@@ -65,6 +65,7 @@ class AzzumTaskListFragmentTests {
 
     @Test
     fun noTasks_displaysNoTaskIconAndMessage() {
+
         //GIVEN - no tasks exists
         //WHEN - task fragment is launched
         val scenario = launchFragmentInContainer<TasksFragment>(Bundle(), R.style.AppTheme)
@@ -77,6 +78,7 @@ class AzzumTaskListFragmentTests {
 
     @Test
     fun oneActiveTask_showsActiveTask() {
+
         //GIVEN - an active task
         val activeTask = Task("New Task", "Desc")
         repository.saveTaskBlocking(activeTask)
@@ -86,7 +88,7 @@ class AzzumTaskListFragmentTests {
         dataBindingIdlingResource.monitorFragment(scenario)
 
         //THEN - the task is shown
-        //I could've used RecyclerViewActions... i feel its an overkill
+        //I could've used RecyclerViewActions... I feel it's an overkill
         onView(withText("New Task")).check(matches(isDisplayed()))
         onView(withId(R.id.complete_checkbox)).check(matches(isNotChecked()))
 
@@ -100,6 +102,7 @@ class AzzumTaskListFragmentTests {
 
     @Test
     fun oneCompletedTask_showsCompletedTask() {
+
         //GIVEN - a compelted task
         val completedTask = Task("New Task", "Desc", true)
         repository.saveTaskBlocking(completedTask)
@@ -123,6 +126,7 @@ class AzzumTaskListFragmentTests {
 
     @Test
     fun activeAndCompletedAreShown() {
+
         //GIVEN - an active task
         val activeTask = Task("Active Task", "Active Desc")
         // a completed task
@@ -135,7 +139,7 @@ class AzzumTaskListFragmentTests {
         val scenario = launchFragmentInContainer<TasksFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
-//        THEN - the active/completed tasks are shown
+        //THEN - the active/completed tasks are shown
         onView(
             allOf(
                 withId(R.id.complete_checkbox),
@@ -189,7 +193,6 @@ class AzzumTaskListFragmentTests {
                 )
             )
 
-
         // THEN - Verify that we navigate to the first detail screen
         verify(mockedNav).navigate(
             TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment("actId1")
@@ -198,6 +201,7 @@ class AzzumTaskListFragmentTests {
 
     @Test
     fun clickAddTaskFab_navigatesToAddEditTaskFragment() {
+
         // GIVEN - task fragment is launched
         val scenario = launchFragmentInContainer<TasksFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)

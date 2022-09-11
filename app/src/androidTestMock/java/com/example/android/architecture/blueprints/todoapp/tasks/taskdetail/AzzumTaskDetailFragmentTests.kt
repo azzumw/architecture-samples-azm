@@ -25,7 +25,6 @@ import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepo
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragment
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragmentDirections
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,7 +36,6 @@ import org.junit.runner.RunWith
 import org.hamcrest.Matchers.`is`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-
 
 @ExperimentalCoroutinesApi
 @MediumTest
@@ -94,6 +92,7 @@ class AzzumTaskDetailFragmentTests {
 
     @Test
     fun completedTaskDetails_DisplayedInUI() {
+
         //GIVEN - a completed task
         val completedTask = Task("Completed Task", "This task is marked as completed!", true)
         repository.saveTaskBlocking(completedTask)
@@ -111,6 +110,7 @@ class AzzumTaskDetailFragmentTests {
 
     @Test
     fun activeTask_isMarkedComplete_showsSnackBar() {
+
         //GIVEN - an active task
         val activeTask = Task("Task1", "Desc1")
         repository.saveTaskBlocking(activeTask)
@@ -142,6 +142,7 @@ class AzzumTaskDetailFragmentTests {
 
     @Test
     fun completedTask_isActivated_showsSnackBar() {
+
         //GIVEN - a completed task
         val completedTask = Task("Completed Task", "This task needs to be activated", true)
         repository.saveTaskBlocking(task = completedTask)
@@ -156,8 +157,7 @@ class AzzumTaskDetailFragmentTests {
         onView(withId(R.id.task_detail_complete_checkbox)).perform(click())
         onView(withId(R.id.task_detail_complete_checkbox)).check(matches(isNotChecked()))
 
-        //THEN - verify that:
-        //snack bar is shown
+        //THEN - verify that: snack bar is shown
         val snackbarMsg = context.resources.getString(R.string.task_marked_complete)
         uiDevice.findObject(UiSelector().className(Snackbar::class.java).textContains(snackbarMsg))
 
@@ -165,6 +165,7 @@ class AzzumTaskDetailFragmentTests {
 
     @Test
     fun activeTask_navigatesToAddEditTask() {
+
         //GIVEN - an active task
         val activeTask = Task("New Task", "Description", false, "id1")
         repository.saveTaskBlocking(activeTask)
@@ -183,7 +184,7 @@ class AzzumTaskDetailFragmentTests {
 
         onView(withId(R.id.edit_task_fab)).perform(click())
 
-        //ln 189-191: this throws NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
+        //ln 191-197: this throws NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
         //tried to play around with the version but the issue persists
         //https://github.com/mockito/mockito/issues/1716
         //This is fixed now. I was passing in the wrong title string!
