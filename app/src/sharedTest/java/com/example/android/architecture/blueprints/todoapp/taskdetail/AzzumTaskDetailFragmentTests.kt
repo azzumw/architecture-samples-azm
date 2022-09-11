@@ -18,11 +18,11 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ServiceLocator
-import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskFragment
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +42,7 @@ import org.mockito.Mockito.verify
 class AzzumTaskDetailFragmentTests {
 
     private val dataBindingIdlingResource = DataBindingIdlingResource()
-    private val context =  InstrumentationRegistry.getInstrumentation().targetContext
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     private lateinit var repository: TasksRepository
     private val uiDevice: UiDevice =
@@ -72,7 +72,6 @@ class AzzumTaskDetailFragmentTests {
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
-    //launch TaskDetailFragment
     @Test
     fun activeTaskDetails_DisplayedInUI() {
 
@@ -142,12 +141,12 @@ class AzzumTaskDetailFragmentTests {
     @Test
     fun completedTask_isActivated_showsSnackBar() {
         //GIVEN - a completed task
-        val completedTask = Task("Completed Task","This task needs to be activated",true)
+        val completedTask = Task("Completed Task", "This task needs to be activated", true)
         repository.saveTaskBlocking(task = completedTask)
 
         //WHEN - detail fragment is launched
         val bundle = TaskDetailFragmentArgs(completedTask.id).toBundle()
-        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle,R.style.AppTheme)
+        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
         //and the task is activated
@@ -163,41 +162,48 @@ class AzzumTaskDetailFragmentTests {
     }
 
     @Test
-    fun editTask_navigatesToAddEditTask() {
+    fun activeTask_navigatesToAddEditTask() {
         //GIVEN - an active task
-        val activeTask = Task("New Task","Description")
+        val activeTask = Task("New Task", "Description", false, "id1")
         repository.saveTaskBlocking(activeTask)
 
         //WHEN - detail fragment is launched
-        val bundle = TaskDetailFragmentArgs(activeTask.id).toBundle()
-        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle,R.style.AppTheme)
+        val bundle = TaskDetailFragmentArgs("id1").toBundle()
+        val scenario = launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
 
-        //THEN - clicking Edit fab navs to AddEditFragment screen
+        //THEN - clicking Edit fab navigates to AddEditFragment screen
         val mockedNav = mock(NavController::class.java)
 
-        scenario.onFragment{
-            mockedNav.setGraph(R.navigation.nav_graph)
+        scenario.onFragment {
             Navigation.setViewNavController(it.requireView(), mockedNav)
         }
 
         onView(withId(R.id.edit_task_fab)).perform(click())
 
-        //ln 186-188: this throws NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
+        //ln 189-191: this throws NoClassDefFoundError: Failed resolution of: Lorg/opentest4j/AssertionError
         //tried to play around with the version but the issue persists
         //https://github.com/mockito/mockito/issues/1716
+        //This is fixed now. I was passing in the wrong title string!
         verify(mockedNav).navigate(
-            TaskDetailFragmentDirections.actionTaskDetailFragmentToAddEditTaskFragment(activeTask.id,activeTask.title)
+            TaskDetailFragmentDirections
+                .actionTaskDetailFragmentToAddEditTaskFragment(
+                    "id1", context.resources.getString(R.string.edit_task)
+                )
         )
     }
 
+    /*
+    * I have written an alternative to the above
+    * */
     @Test
-    fun navtest() {
+    fun navToAddEditTask() {
         val navController = TestNavHostController(
-            ApplicationProvider.getApplicationContext())
+            ApplicationProvider.getApplicationContext()
+        )
 
         //GIVEN - an active task
-        val activeTask = Task("New Task","Description")
+        val activeTask = Task("New Task", "Description")
         repository.saveTaskBlocking(activeTask)
 
         //and detail fragment is launched

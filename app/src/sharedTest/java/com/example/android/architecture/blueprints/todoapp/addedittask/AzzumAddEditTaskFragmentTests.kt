@@ -160,8 +160,11 @@ class AzzumAddEditTaskFragmentTests {
         val bundle = AddEditTaskFragmentArgs(null,"New Task").toBundle()
         val scenario = launchFragmentInContainer<AddEditTaskFragment>(bundle, R.style.AppTheme)
         scenario.moveToState(Lifecycle.State.RESUMED)
-        scenario.onFragment{
 
+        val mockedNav = mock(NavController::class.java)
+
+        scenario.onFragment{
+            Navigation.setViewNavController(it.requireView(),mockedNav)
         }
         dataBindingIdlingResource.monitorFragment(scenario)
         //WHEN - title and description are filled, and Save fab is clicked
@@ -181,24 +184,14 @@ class AzzumAddEditTaskFragmentTests {
         onView(withId(R.id.save_task_fab)).perform(click())
 
         //THEN - verify repository has the task
-//        val result = repository.getTasksBlocking(true) as Result.Success
-//        assertThat(result.data.size, `is`(1))
-//        assertThat(result.data.get(0).title, `is`("New Task"))
+        val result = repository.getTasksBlocking(true) as Result.Success
+        assertThat(result.data.size, `is`(1))
+        assertThat(result.data.last().title, `is`("New Task"))
 
-        //THEN - verify correct navigation is called
-//        val navController = mock(NavController::class.java)
-
-        //This code is breaking possibly due to EventObserver
-        //Exception thrown:
-        // View androidx.coordinatorlayout.widget.CoordinatorLayout{ab31157 V.E...... ........ 0,0-1080,1731 #7f0a0085 app:id/coordinator_layout aid=1073741826} does not have a NavController set
-//        scenario.onFragment{
-//
-//            Navigation.setViewNavController(it.requireView(),navController)
-//        }
-
-//        verify(navController).navigate(
-//            AddEditTaskFragmentDirections.actionAddEditTaskFragmentToTasksFragment(
-//                ADD_EDIT_RESULT_OK
-//            ))
+        //and verify correct navigation is called
+        verify(mockedNav).navigate(
+            AddEditTaskFragmentDirections.actionAddEditTaskFragmentToTasksFragment(
+                ADD_EDIT_RESULT_OK
+            ))
     }
 }
