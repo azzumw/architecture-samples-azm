@@ -40,7 +40,7 @@ import org.mockito.Mockito.verify
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 @ExperimentalCoroutinesApi
-class AzzumAddEditTaskFragmentTests {
+class AzzumAddTaskTests {
 
     private lateinit var repository: TasksRepository
     private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
