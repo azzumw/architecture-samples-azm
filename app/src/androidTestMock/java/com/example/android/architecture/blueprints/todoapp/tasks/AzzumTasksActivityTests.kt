@@ -10,13 +10,13 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.google.android.material.snackbar.Snackbar
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ServiceLocator
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
@@ -28,7 +28,6 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -38,6 +37,9 @@ import org.junit.runner.RunWith
 class AzzumTasksActivityTests {
 
     companion object {
+        const val TIMEOUT_ONE_SEC = 1000L
+        const val TIMEOUT_TWO_SEC = 2000L
+
         const val ACTIVE_TASK_TITLE = "Active Task"
         const val ACTIVE_TASK_DESC = "Active Task Description"
         const val ACTIVE_TASK_ID = "actId1"
@@ -49,8 +51,27 @@ class AzzumTasksActivityTests {
         const val COMPLETED_TASK_ID = "compId1"
         const val COMPLETED_NEW_TASK_TITLE = "New Completed Task"
         const val COMPLETED_NEW_TASK_DESC = "New Completed Task Description"
+
+        val addTaskFab = viewWithId(R.id.add_task_fab)
+        val addTaskTitleEditText = viewWithId(R.id.add_task_title_edit_text)
+        val addTaskDescEditText = viewWithId(R.id.add_task_description_edit_text)
+
+        val saveTaskFab = viewWithId(R.id.save_task_fab)
+        val editTaskFab = viewWithId(R.id.edit_task_fab)
+
+        val deleteMenu = viewWithId(R.id.menu_delete)
+        val filterMenu = viewWithId(R.id.menu_filter)
+        val menuNavActive = viewWithText(R.string.nav_active)
+        val menuNavCompleted = viewWithText(R.string.nav_completed)
+        val menuNavAll = viewWithText(R.string.nav_all)
+        val kebabMenuClearCompleted = viewWithText(R.string.menu_clear)
+
+        val noTaskIcon = viewWithId(R.id.no_tasks_icon)
+
+
     }
 
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private lateinit var repository: TasksRepository
     private val dataBindingIdlingResource = DataBindingIdlingResource()
     private val uiDevice: UiDevice =
@@ -90,11 +111,10 @@ class AzzumTasksActivityTests {
 
         //WHEN - task is created
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
-//        onView(withId(com.google.android.material.R.id.snackbar_text))
-//            .check(matches(withText(R.string.successfully_added_task_message)))
 
         //THEN - verify the task is shown in the task list
-        onView(withText(ACTIVE_TASK_TITLE)).check(matches(isDisplayed()))
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed()
+
         activity.close()
 
     }
@@ -107,6 +127,7 @@ class AzzumTasksActivityTests {
 
         //WHEN - task is created
         addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
+
         //THEN - verify that the task is shown
         //task is not checked
         //task is marked completed, and is checked
@@ -153,14 +174,14 @@ class AzzumTasksActivityTests {
         //WHEN - a task is created
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
 
-        onView(withText(ACTIVE_TASK_TITLE)).check(matches(isDisplayed())).perform(click())
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed().click()
 
         //THEN - verify the task is displayed in Task Detail screen
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
             1000
         )
-        onView(withText(ACTIVE_TASK_TITLE)).check(matches(isDisplayed()))
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed()
 
         activity.close()
     }
@@ -175,7 +196,8 @@ class AzzumTasksActivityTests {
         addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
 
         //task is shown, clicked to show details, marked as completed
-        onView(withText(COMPLETED_TASK_TITLE)).check(matches(isDisplayed())).perform(click())
+        viewWithText(COMPLETED_TASK_TITLE).isDisplayed().click()
+
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
             1000
@@ -189,7 +211,7 @@ class AzzumTasksActivityTests {
             .perform(click())
             .check(matches(isChecked()))
 
-        //navback
+        //navigate back to task list
         onView(isAssignableFrom(AppCompatImageButton::class.java)).check(
             matches(
                 withParent(
@@ -225,10 +247,11 @@ class AzzumTasksActivityTests {
             .perform(click())
             .check(matches(isChecked()))
 
-        onView(withText(ACTIVE_TASK_TITLE)).perform(click())
+        viewWithText(ACTIVE_TASK_TITLE).click()
+
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
-            1000
+            TIMEOUT_ONE_SEC
         )
 
         onView(
@@ -240,14 +263,7 @@ class AzzumTasksActivityTests {
             .perform(click())
             .check(matches(isNotChecked()))
 
-        //navback
-        onView(isAssignableFrom(AppCompatImageButton::class.java)).check(
-            matches(
-                withParent(
-                    isAssignableFrom(Toolbar::class.java)
-                )
-            )
-        ).perform(click())
+        navigateBackToTaskFragment()
 
         //THEN - verify task is now active
         onView(
@@ -266,24 +282,22 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
+        noTaskIcon.isDisplayed()
         //WHEN - task is added
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
 
-        onView(withText(ACTIVE_TASK_TITLE))
-            .check(matches(isDisplayed()))
-            .perform(click())
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed().click()
 
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
-            1000
+            TIMEOUT_ONE_SEC
         )
 
-        onView(withText(ACTIVE_TASK_TITLE))
-            .check(matches(isDisplayed()))
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed()
 
-        onView(withId(R.id.menu_delete)).perform(click())
+        deleteMenu.click()
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         activity.close()
     }
@@ -294,7 +308,7 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         //WHEN - task is added
         addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
@@ -308,7 +322,8 @@ class AzzumTasksActivityTests {
             .perform(click())
             .check(matches(isChecked()))
 
-        onView(withText(COMPLETED_TASK_TITLE)).perform(click())
+        viewWithText(COMPLETED_TASK_TITLE).click()
+
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
             1000
@@ -321,9 +336,9 @@ class AzzumTasksActivityTests {
             )
         ).check(matches(isChecked()))
 
-        onView(withId(R.id.menu_delete)).perform(click())
+        deleteMenu.click()
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         activity.close()
 
@@ -334,37 +349,29 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
 
-        onView(withText(ACTIVE_TASK_TITLE))
-            .perform(click())
+        viewWithText(ACTIVE_TASK_TITLE).click()
 
         uiDevice.waitForWindowUpdate(
             "com.example.android.architecture.blueprints.todoapp.taskdetail",
-            1000
+            TIMEOUT_ONE_SEC
         )
 
-        onView(withText(ACTIVE_TASK_TITLE)).check(matches(isDisplayed()))
-
-        onView(withId(R.id.edit_task_fab)).perform(click())
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed()
+        editTaskFab.click()
 
         //change title and description
-        onView(withId(R.id.add_task_title_edit_text)).perform(
-            replaceText(ACTIVE_NEW_TASK_TITLE),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.add_task_description_edit_text)).perform(
-            replaceText(ACTIVE_NEW_TASK_DESC),
-            closeSoftKeyboard()
-        )
+        addTaskTitleEditText.type(ACTIVE_NEW_TASK_TITLE)
+        addTaskDescEditText.type(ACTIVE_NEW_TASK_DESC)
 
-        onView(withId(R.id.save_task_fab))
+        saveTaskFab.click()
 
-        //THEN - verify task title/description is updated
-        onView(withText(ACTIVE_NEW_TASK_TITLE)).check(matches(isDisplayed())).perform(click())
-        onView(withText(ACTIVE_NEW_TASK_DESC)).check(matches(isDisplayed()))
+        //THEN - verify task title/description are updated
+        viewWithText(ACTIVE_NEW_TASK_TITLE).isDisplayed().click()
+        viewWithText(ACTIVE_NEW_TASK_DESC).isDisplayed()
 
         activity.close()
     }
@@ -374,17 +381,20 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
+        noTaskIcon.isDisplayed()
+
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
 
-        onView(withText(R.string.label_all)).check(matches(isDisplayed()))
+        viewWithText(R.string.label_all).isDisplayed()
 
-        onView(withId(R.id.menu_filter)).perform(click())
-        onView(withText(R.string.nav_active)).perform(click())
-        onView(withText(R.string.label_active)).check(matches(isDisplayed()))
-        onView(withText(ACTIVE_TASK_TITLE)).check(matches(isDisplayed()))
+        filterMenu.click()
+        viewWithText(R.string.nav_active).click()
 
-        onView(withId(R.id.menu_filter)).perform(click())
-        onView(withText(R.string.nav_completed)).perform(click())
+        viewWithText(R.string.label_active).isDisplayed()
+        viewWithText(ACTIVE_TASK_TITLE).isDisplayed()
+
+        filterMenu.click()
+        viewWithText(R.string.nav_completed).click()
 
         onView(
             allOf(
@@ -392,7 +402,8 @@ class AzzumTasksActivityTests {
                 withText(ACTIVE_TASK_TITLE)
             )
         ).check(matches(not(isDisplayed())))
-        onView(withText(R.string.no_tasks_completed)).check(matches(isDisplayed()))
+
+        viewWithText(R.string.no_tasks_completed).isDisplayed()
 
         activity.close()
     }
@@ -403,11 +414,12 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
+        noTaskIcon.isDisplayed()
         //task is added
         addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
 
         //ALL TASKS filter is set by default
-        onView(withText(R.string.label_all)).check(matches(isDisplayed()))
+        viewWithText(R.string.label_all).isDisplayed()
 
         //WHEN - task is marked completed,
         onView(
@@ -420,10 +432,10 @@ class AzzumTasksActivityTests {
             .check(matches(isChecked()))
 
         //THEN - verify completed task does not appear in active tasks
-        onView(withId(R.id.menu_filter)).perform(click())
-        onView(withText(R.string.nav_active)).perform(click())
+        filterMenu.click()
+        menuNavActive.click()
 
-        onView(withText(R.string.no_tasks_active)).check(matches(isDisplayed()))
+        viewWithText(R.string.no_tasks_active).isDisplayed()
 
         onView(
             allOf(
@@ -433,11 +445,11 @@ class AzzumTasksActivityTests {
         ).check(matches(not(isDisplayed())))
 
         //and verify completed task appears in completed tasks only
-        onView(withId(R.id.menu_filter)).perform(click())
-        onView(withText(R.string.nav_completed)).perform(click())
+        filterMenu.click()
+        menuNavCompleted.click()
 
-        onView(withText(R.string.label_completed)).check(matches(isDisplayed()))
-        onView(withText(COMPLETED_TASK_TITLE)).check(matches(isDisplayed()))
+        viewWithText(R.string.label_completed).isDisplayed()
+        viewWithText(COMPLETED_TASK_TITLE).isDisplayed()
 
         activity.close()
 
@@ -450,7 +462,7 @@ class AzzumTasksActivityTests {
         dataBindingIdlingResource.monitorActivity(activity)
 
         //no tasks exist
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         //add an active task and a completed task
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
@@ -475,13 +487,14 @@ class AzzumTasksActivityTests {
             .check(matches(isChecked()))
 
         //click filter menu
-        onView(withId(R.id.menu_filter)).perform(click())
+        filterMenu.click()
 
         //filter active tasks
-        onView(withText(R.string.nav_active)).perform(click())
+        menuNavActive.click()
 
         //THEN - verify active task appears in active tasks list only
-        onView(withText(R.string.label_active)).check(matches(isDisplayed()))
+        viewWithText(R.string.label_active).isDisplayed()
+
         onView(
             allOf(
                 withId(R.id.complete_checkbox),
@@ -498,10 +511,11 @@ class AzzumTasksActivityTests {
         ).check(doesNotExist())
 
         //verify completed task appears in completed tasks list
-        onView(withId(R.id.menu_filter)).perform(click())
-        onView(withText(R.string.nav_completed)).perform(click())
+        filterMenu.click()
+        menuNavCompleted.click()
 
-        onView(withText(R.string.label_completed)).check(matches(isDisplayed()))
+        viewWithText(R.string.label_completed).isDisplayed()
+
         onView(
             allOf(
                 withId(R.id.complete_checkbox),
@@ -526,7 +540,7 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         //a completed task is added
         addATask(COMPLETED_TASK_TITLE, COMPLETED_TASK_dESC)
@@ -540,10 +554,10 @@ class AzzumTasksActivityTests {
             .perform(click())
             .check(matches(isChecked()))
 
-
         //WHEN - completed task is cleared
         uiDevice.pressMenu()
-        onView(withText(R.string.menu_clear)).perform(click())
+        kebabMenuClearCompleted.click()
+//        onView(withText(R.string.menu_clear)).perform(click())
 
         uiDevice.findObject(
             UiSelector()
@@ -552,8 +566,9 @@ class AzzumTasksActivityTests {
 
 
         //THEN - verify task icon is shown
-        onView(withText(R.string.no_tasks_all))
-            .check(matches(isDisplayed()))
+        viewWithText(R.string.no_tasks_all).isDisplayed()
+//        onView(withText(R.string.no_tasks_all))
+//            .check(matches(isDisplayed()))
 
         //and title text view with task title does not exist
         onView(
@@ -573,7 +588,7 @@ class AzzumTasksActivityTests {
         val activity = launch(TasksActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activity)
 
-        onView(withId(R.id.no_tasks_icon)).check(matches(isDisplayed()))
+        noTaskIcon.isDisplayed()
 
         //an active task added
         addATask(ACTIVE_TASK_TITLE, ACTIVE_TASK_DESC)
@@ -587,12 +602,14 @@ class AzzumTasksActivityTests {
 
         //WHEN - completed task is cleared
         uiDevice.pressMenu()
-        onView(withText(R.string.menu_clear)).perform(click())
+
+        kebabMenuClearCompleted.click()
+//        viewWithText(R.string.menu_clear).click()
 
         uiDevice.findObject(
             UiSelector()
                 .textContains("Completed tasks cleared")
-        ).waitUntilGone(1000)
+        ).waitUntilGone(TIMEOUT_ONE_SEC)
 
         //THEN verify the active task is not cleared
         onView(
@@ -607,19 +624,16 @@ class AzzumTasksActivityTests {
     }
 
     private fun addATask(taskTypeTitle: String, taskTypeDescription: String) {
-        onView(withId(R.id.add_task_fab)).perform(click())
-        onView(withId(R.id.add_task_title_edit_text)).perform(
-            typeText(taskTypeTitle), closeSoftKeyboard()
-        )
-        onView(withId(R.id.add_task_description_edit_text)).perform(
-            typeText(taskTypeDescription), closeSoftKeyboard()
-        )
-        onView(withId(R.id.save_task_fab)).perform(click())
 
-        uiDevice.waitForWindowUpdate(
-            " com.example.android.architecture.blueprints.todoapp.tasks",
-            1000
-        )
+        addTaskFab.click()
+
+        addTaskTitleEditText.type(taskTypeTitle)
+
+        addTaskDescEditText.type(taskTypeDescription)
+
+        saveTaskFab.click()
+
+        uiDevice.wait(Until.gone(By.text(context.resources.getString(R.string.successfully_added_task_message))),TIMEOUT_TWO_SEC)
 
     }
 }
