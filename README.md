@@ -5,6 +5,8 @@ The task's focus is however limited to just designing test scripts for the add, 
 
 Please note: due to the time constraints, only the Instrumentation (UI) tests have been written which reside inside the androidTestMock folder under their respective packages.
 
+![alt text](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/test_files.png "Test Files")
+
 ### To be noted:
 - Due to time constraints, no unit tests have been written
 - Only Integration and E2E tests have been designed
@@ -38,7 +40,9 @@ Note: I had started to refactor the code. As such, you will see I have used Kotl
 However, refactoring has not been applied to other tests due to the time constraints. 
 
 
-## The End Result
+### The End Result - All tests are in passing state
+
+
 
 place image here
 
