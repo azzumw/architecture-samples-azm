@@ -3,9 +3,7 @@
 This is an exercise completed as part of the Android Test Engieer role for Proton. 
 The task's focus is however limited to just designing test scripts for the add, edit and delete features of the To-Do application.
 
-Please note: due to the time constraints, only the Instrumentation (UI) tests have been written which reside inside the androidTestMock folder under their respective packages. 
-
-//place an image here
+Please note: due to the time constraints, only the Instrumentation (UI) tests have been written which reside inside the androidTestMock folder under their respective packages.
 
 ### To be noted:
 - Due to time constraints, no unit tests have been written
