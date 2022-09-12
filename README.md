@@ -1,69 +1,49 @@
-# Android Architecture Blueprints v2
-<p align="center">
-<img src="https://github.com/googlesamples/android-architecture/wiki/images/aab-logov2.png" alt="Illustration by Virginia Poltrack"/>
-</p>
+# Proton Android Test Engineer Espresso Tests Exercise
 
-Android Architecture Blueprints is a project to showcase different architectural approaches to developing Android apps. In its different branches you'll find the same app (a TODO app) implemented with small differences.
+This is an exercise completed as part of the Android Test Engieer role for Proton. 
+The task's focus is however limited to just designing test scripts for the add, edit and delete features of the To-Do application.
 
-In this branch you'll find:
-*   Kotlin **[Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html)** for background operations.
-*   A single-activity architecture, using the **[Navigation component](https://developer.android.com/guide/navigation/navigation-getting-started)** to manage fragment operations.
-*   A presentation layer that contains a fragment (View) and a **ViewModel** per screen (or feature).
-*   Reactive UIs using **LiveData** observables and **Data Binding**.
-*   A **data layer** with a repository and two data sources (local using Room and remote) that are queried with one-shot operations (no listeners or data streams).
-*   Two **product flavors**, `mock` and `prod`, [to ease development and testing](https://android-developers.googleblog.com/2015/12/leveraging-product-flavors-in-android.html) (except in the Dagger branch).
-*   A collection of unit, integration and e2e **tests**, including "shared" tests that can be run on emulator/device or Robolectric.
+Please note: due to the time constraints, only the Instrumentation (UI) tests have been written which reside inside the androidTestMock folder under their respective packages. 
 
-## Variations
+//place an image here
 
-This project hosts each sample app in separate repository branches. For more information, see the `README.md` file in each branch.
+### To be noted:
+- Due to time constraints, no unit tests have been written
+- Only Integration and E2E tests have been designed
+- UiAutomator: some tests made use of uiautomator for the snackbar testing. I encountered an issue with testing snackbar but I did not want to go down in to that rabbit hole for now, so as an alternative, I have made use of UiAutomator. You will even find some comment out code in AzzumTaskDetailFragmentTests. 
+- Mockito: I have used mockito library to mock NavigationController of the app. 
 
-### Stable samples - Kotlin
-|     Sample     | Description |
-| ------------- | ------------- |
-| [master](https://github.com/googlesamples/android-architecture/tree/master) | The base for the rest of the branches. <br/>Uses Kotlin, Architecture Components, coroutines, Data Binding, etc. and uses Room as source of truth, with a reactive UI. |
-| [dagger-android](https://github.com/googlesamples/android-architecture/tree/dagger-android)<br/>[[compare](https://github.com/googlesamples/android-architecture/compare/dagger-android#files_bucket)] | A simple Dagger setup that uses `dagger-android` and removes the two flavors. |
-| [usecases](https://github.com/googlesamples/android-architecture/tree/usecases)<br/>[[compare](https://github.com/googlesamples/android-architecture/compare/usecases#files_bucket)] | Adds a new domain layer that uses UseCases for business logic. |
 
-### Old samples - Kotlin and Java
+### What the exercise contains: 
+Firstly, ensure you are on azzum-tests branch in order to view the tests. 
 
-Blueprints v1 had a collection of samples that are not maintained anymore, but can still be useful. See [all project branches](https://github.com/googlesamples/android-architecture/branches).
+#### Test Suite: (runs alls the tests - Integration/E2E)
+- [AndroidTestSuite](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/AndroidTestSuite.kt) 
 
-## Why a to-do app?
+#### Integration Tests: 
+@MediumTests
 
-<img align="right" src="https://github.com/googlesamples/android-architecture/wiki/images/todoapp.gif" alt="A demo illustraating the UI of the app" width="288" height="512" style="display: inline; float: right"/>
+- [AzzumTasksListFragmentTests](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/tasks/AzzumTaskListFragmentTests.kt) : This test file contains 6 tests testing integration between TasksFragment and TasksViewModel. Also tests navigation to AddEditTaskFragment and TaskDetailFragment. This is achieved using Mockito library. 
 
-The app in this project aims to be simple enough that you can understand it quickly, but complex enough to showcase difficult design decisions and testing scenarios. For more information, see the [app's specification](https://github.com/googlesamples/android-architecture/wiki/To-do-app-specification).
+- [AzzumAddTaskTests](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/addedittask/AzzumAddTaskTests.kt) : contains 4 tests. This file's focus is to just test 'adding' of the task for AddEditTaskFragment. I have deliberately segregated the add and edit tests into two separate files (see the other file AzzumEditTasksTests) just for brevity sake. 
 
-## What is it not?
+- [AzzumEditTasksTests](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/addedittask/AzzumEditTasksTests.kt) : contains 4 tests. Since, editing task requires saving and navigating to TasksFragment, I stubbed out the navigation behaviour using Mockito's mock(). 
 
-*   A UI/Material Design sample. The interface of the app is deliberately kept simple to focus on architecture. Check out [Plaid](https://github.com/android/plaid) instead.
-*   A complete Jetpack sample covering all libraries. Check out [Android Sunflower](https://github.com/googlesamples/android-sunflower) or the advanced [Github Browser Sample](https://github.com/googlesamples/android-architecture-components/tree/master/GithubBrowserSample) instead.
-*   A real production app with network access, user authentication, etc. Check out the [Google I/O app](https://github.com/google/iosched), [Santa Tracker](https://github.com/google/santa-tracker-android) or [Tivi](https://github.com/chrisbanes/tivi) for that.
+- [AzzumTaskDetailFragmentTests](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/taskdetail/AzzumTaskDetailFragmentTests.kt) : There are 6 tests. The last two tests essentially are the same; Test 5 uses mocked navigation, and where as Test 6 uses the android's TestNavHostController to assert we navigate to correct destination fragment by matching the fragment id. The need arose due to the error I was facing on lines 191-196: I was passing in an incorrect argument. 
 
-## Who is it for?
+#### E2E tests:
+@LargeTests
 
-*   Intermediate developers and beginners looking for a way to structure their app in a testable and maintainable way.
-*   Advanced developers looking for quick reference.
+- [AzzumTasksActivityTests.kt](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/AzzumTasksActivityTests.kt) : 
+These are the main activity tests that tests the entire flow of the add, edit, delete features. This file consists of 14 tests.
+Note: I had started to refactor the code. As such, you will see I have used Kotlin's extension functions to improve scripts' readability.
+However, refactoring has not been applied to other tests due to the time constraints. 
 
-## Opening a sample in Android Studio
 
-To open one of the samples in Android Studio, begin by checking out one of the sample branches, and then open the root directory in Android Studio. The following series of steps illustrate how to open the [usecases](tree/usecases/) sample.
+## The End Result
 
-Clone the repository:
+place image here
 
-```
-git clone git@github.com:googlesamples/android-architecture.git
-```
-This step checks out the master branch. If you want to change to a different sample: 
-
-```
-git checkout usecases
-```
-
-**Note:** To review a different sample, replace `usecases` with the name of sample you want to check out.
-
-Finally open the `android-architecture/` directory in Android Studio.
 
 ### License
 
