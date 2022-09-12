@@ -12,6 +12,7 @@ The task's focus is however limited to just designing test scripts for the add, 
 ### To be noted:
 - Due to time constraints, no unit tests have been written
 - Only Integration and E2E tests have been designed
+- Navigation of the entire app is not covered due to time constraints
 - AddEditTaskFragmentTests - are separated into two separate files: AzzumAddTaskTests.kt and AzzumEditTasksTests.kt
 - UiAutomator: some tests made use of uiautomator for the snackbar testing. I encountered an issue with testing snackbar but I did not want to go down in to that rabbit hole for now, so as an alternative, I have made use of UiAutomator. You will even find some comment out code in AzzumTaskDetailFragmentTests. 
 - Mockito: I have used mockito library to mock NavigationController of the app. 
@@ -21,7 +22,7 @@ The task's focus is however limited to just designing test scripts for the add, 
 ### What the exercise contains: 
 Firstly, ensure you are on **azzum-tests** branch in order to view the tests. 
 
-#### Test Suite: (runs alls the tests - Integration/E2E)
+#### Test Suite: (runs all the tests - Integration/E2E)
 - [AndroidTestSuite](https://github.com/azzumw/architecture-samples-azm/blob/azzum-tests/app/src/androidTestMock/java/com/example/android/architecture/blueprints/todoapp/tasks/AndroidTestSuite.kt) 
 
 #### Integration Tests: 
